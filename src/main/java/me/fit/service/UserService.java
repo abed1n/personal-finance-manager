@@ -1,0 +1,25 @@
+package me.fit.service;
+
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import me.fit.model.User;
+
+import java.util.List;
+
+@Dependent
+public class UserService {
+
+    @Inject
+    private EntityManager em;
+
+    @Transactional
+    public User createUser(User user) {
+        return em.merge(user);
+    }
+
+    public List<User> getAllUsers() {
+        return em.createNamedQuery(User.GET_ALL_USERS, User.class).getResultList();
+    }
+}
