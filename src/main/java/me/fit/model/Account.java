@@ -1,13 +1,20 @@
 package me.fit.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name = Account.GET_ACCOUNTS_BY_USER_ID,
+        query = "Select a from Account a where a.user.id = :id")
 public class Account {
+
+    public static final String GET_ACCOUNTS_BY_USER_ID = "GetAccountsByUserId";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_seq")
@@ -17,8 +24,18 @@ public class Account {
     private String name;
     private BigDecimal balance;
 
-    @Transient //dodato kako bi Hibernate ignorisao ovo polje jer jos nismo radili anotacije za relacije
-    private List<Transaction> transactions;
+    @JsonManagedReference("account-transactions")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private List<Transaction> transactions = new ArrayList<>();
+
+    @OneToOne
+    private AccountDetails accountDetails;
+
+    @JsonBackReference("user-accounts") // Dodao sam kako bih sprijecio circular reference (beskonačna petlja)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Account() {
     }
@@ -55,6 +72,22 @@ public class Account {
         this.transactions = transactions;
     }
 
+    public AccountDetails getAccountDetails() {
+        return accountDetails;
+    }
+
+    public void setAccountDetails(AccountDetails accountDetails) {
+        this.accountDetails = accountDetails;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Account account)) return false;
@@ -64,5 +97,17 @@ public class Account {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", balance=" + balance +
+                ", transactions=" + transactions +
+                ", accountDetails=" + accountDetails +
+                ", user=" + user +
+                '}';
     }
 }

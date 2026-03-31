@@ -1,13 +1,15 @@
 package me.fit.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@NamedQuery(name = User.GET_ALL_USERS, query = "SELECT u FROM User u")
+@NamedQuery(name = User.GET_ALL_USERS, query = "Select u from User u")
 public class User {
 
     public static final String GET_ALL_USERS = "User.getAllUsers";
@@ -21,10 +23,13 @@ public class User {
     private String email;
     private String password;
 
-    @Transient
+    @OneToOne
     private Profile profile;
-    @Transient
-    private List<Account> accounts;
+
+    @JsonManagedReference("user-accounts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private List<Account> accounts = new ArrayList<>();
 
     public User() {
     }
@@ -86,5 +91,17 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", profile=" + profile +
+                ", accounts=" + accounts +
+                '}';
     }
 }

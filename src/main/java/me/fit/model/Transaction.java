@@ -1,5 +1,6 @@
 package me.fit.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -8,7 +9,20 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name = Transaction.GET_TRANSACTIONS_BY_CATEGORY,
+        query = "Select t from Transaction t where t.category.name = :categoryName")
+@NamedQuery(name = Transaction.GET_TRANSACTIONS_BY_TYPE,
+        query = "Select t from Transaction t where t.type = :type")
+@NamedQuery(name = Transaction.GET_TRANSACTIONS_BY_ACCOUNT_ID,
+        query = "Select t from Transaction t where t.account.id = :id")
+@NamedQuery(name = Transaction.GET_TRANSACTIONS_BY_CATEGORY_ID,
+        query = "Select t from Transaction t where t.category.id = :id")
 public class Transaction {
+
+    public static final String GET_TRANSACTIONS_BY_CATEGORY = "GetTransactionsByCategory";
+    public static final String GET_TRANSACTIONS_BY_TYPE = "GetTransactionsByType";
+    public static final String GET_TRANSACTIONS_BY_ACCOUNT_ID = "GetTransactionsByAccountId";
+    public static final String GET_TRANSACTIONS_BY_CATEGORY_ID = "GetTransactionsByCategoryId";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq")
@@ -19,8 +33,18 @@ public class Transaction {
     private LocalDate date;
     private String type;
 
-    @Transient
+    @Transient // za sad je ovako jer jos nismo radili @ManyToMany
     private List<Tag> tags;
+
+    @JsonBackReference("account-transactions")
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
+
+    @JsonBackReference("category-transactions")
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public Transaction() {
     }
@@ -65,6 +89,22 @@ public class Transaction {
         this.tags = tags;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Transaction that)) return false;
@@ -74,5 +114,18 @@ public class Transaction {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", date=" + date +
+                ", type='" + type + '\'' +
+                ", tags=" + tags +
+                ", account=" + account +
+                ", category=" + category +
+                '}';
     }
 }

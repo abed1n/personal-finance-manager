@@ -17,7 +17,7 @@ public class Budget {
     private String name;
     private BigDecimal limitAmount;
 
-    @Transient
+    @Transient //za sad je ovako jer jos nismo radili @ManyToMany
     private List<Category> categories;
 
     public Budget() {
@@ -64,5 +64,15 @@ public class Budget {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Budget{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", limitAmount=" + limitAmount +
+                ", categories=" + categories +
+                '}';
     }
 }

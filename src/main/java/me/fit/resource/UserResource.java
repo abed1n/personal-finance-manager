@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import me.fit.model.Account;
 import me.fit.model.User;
 import me.fit.service.UserService;
 
@@ -18,9 +19,9 @@ public class UserResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/addUser")
-    public String addUser(User user) {
+    public Response addUser(User user) {
         userService.createUser(user);
-        return "User created successfully";
+        return Response.ok().build();
     }
 
     @GET
@@ -30,4 +31,13 @@ public class UserResource {
         List<User> users = userService.getAllUsers();
         return Response.ok().entity(users).build();
     }
+
+    @GET
+    @Path("/getAccountsByUserId")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAccountsByUserId(@QueryParam("id") Long id) {
+        List<Account> accounts = userService.getAccountsByUserId(id);
+        return Response.ok().entity(accounts).build();
+    }
+
 }
