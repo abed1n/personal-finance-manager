@@ -1,5 +1,6 @@
 package me.fit.resource;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -27,6 +28,7 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/getAllUsers")
+    @RolesAllowed("admin")
     public Response getAllUsers() {
         List<User> users = userService.getAllUsers();
         return Response.ok().entity(users).build();
@@ -35,6 +37,7 @@ public class UserResource {
     @GET
     @Path("/getAccountsByUserId")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public Response getAccountsByUserId(@QueryParam("id") Long id) {
         List<Account> accounts = userService.getAccountsByUserId(id);
         return Response.ok().entity(accounts).build();
