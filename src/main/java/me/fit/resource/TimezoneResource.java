@@ -9,7 +9,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import me.fit.exception.UserNotFoundException;
 import me.fit.model.TimezoneResponse;
-import me.fit.model.User;
 import me.fit.rest.client.IpApi;
 import me.fit.rest.client.TimezoneApi;
 import me.fit.service.UserService;
@@ -45,8 +44,8 @@ public class TimezoneResource {
         try {
             String ipAddress = ipApi.getPublicIp().trim();
             TimezoneResponse timezoneResponse = timezoneApi.getTimeByIp(ipAddress);
-            User user = userService.addTimezoneToUser(userId, timezoneResponse);
-            return Response.ok().entity(user).build();
+            userService.addTimezoneToUser(userId, timezoneResponse);
+            return Response.ok().entity(timezoneResponse).build();
         } catch (UserNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
