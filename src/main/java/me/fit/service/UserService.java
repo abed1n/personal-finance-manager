@@ -5,10 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import me.fit.exception.UserNotFoundException;
-import me.fit.model.Account;
-import me.fit.model.LocationResponse;
-import me.fit.model.TimezoneResponse;
-import me.fit.model.User;
+import me.fit.model.*;
 
 import java.util.List;
 
@@ -59,4 +56,14 @@ public class UserService {
         return em.merge(user);
     }
 
+    @Transactional
+    public User addCurrencyConversionToUser(Long userId, CurrencyResponse currencyResponse) throws UserNotFoundException {
+        User user = em.find(User.class, userId);
+        if (user == null) {
+            throw new UserNotFoundException(userId);
+        }
+        currencyResponse.getUsers().add(user);
+        user.setCurrencyResponse(currencyResponse);
+        return em.merge(user);
+    }
 }

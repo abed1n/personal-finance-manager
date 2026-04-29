@@ -1,5 +1,6 @@
 package me.fit.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -41,7 +42,20 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<LocationResponse> locations = new ArrayList<>();
 
+    @JsonBackReference("currency-users")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private CurrencyResponse currencyResponse;
+
     public User() {
+    }
+
+    public CurrencyResponse getCurrencyResponse() {
+        return currencyResponse;
+    }
+
+    public void setCurrencyResponse(CurrencyResponse currencyResponse) {
+        this.currencyResponse = currencyResponse;
     }
 
     public Long getId() {
