@@ -12,6 +12,6 @@ public interface TimezoneApi {
 
     @GET
     @Path("/ip")
-    TimezoneResponse getTimeByIp(@QueryParam("ipAddress") String ipAddress);
+    public TimezoneResponse getTimeByIp(@QueryParam("ipAddress") String ipAddress);
 
 }

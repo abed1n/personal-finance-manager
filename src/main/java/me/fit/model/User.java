@@ -36,6 +36,11 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<TimezoneResponse> timezones = new ArrayList<>();
 
+    @JsonManagedReference("user-locations")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private List<LocationResponse> locations = new ArrayList<>();
+
     public User() {
     }
 
@@ -93,6 +98,14 @@ public class User {
 
     public void setTimezones(List<TimezoneResponse> timezones) {
         this.timezones = timezones;
+    }
+
+    public List<LocationResponse> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<LocationResponse> locations) {
+        this.locations = locations;
     }
 
     @Override

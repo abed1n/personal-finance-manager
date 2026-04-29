@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import me.fit.exception.UserNotFoundException;
 import me.fit.model.Account;
+import me.fit.model.LocationResponse;
 import me.fit.model.TimezoneResponse;
 import me.fit.model.User;
 
@@ -44,6 +45,17 @@ public class UserService {
         }
         timezoneResponse.setUser(user);
         user.getTimezones().add(timezoneResponse);
+        return em.merge(user);
+    }
+
+    @Transactional
+    public User addLocationToUser(Long userId, LocationResponse locationResponse) throws UserNotFoundException {
+        User user = em.find(User.class, userId);
+        if (user == null) {
+            throw new UserNotFoundException(userId);
+        }
+        locationResponse.setUser(user);
+        user.getLocations().add(locationResponse);
         return em.merge(user);
     }
 
