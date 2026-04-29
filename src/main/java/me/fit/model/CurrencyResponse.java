@@ -1,11 +1,8 @@
 package me.fit.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,17 +16,21 @@ public class CurrencyResponse {
     private double value;
     private double convertedValue;
 
+    @Column(name = "from_currency")
     public String from;
+
+    @Column(name = "to_currency")
     @JsonProperty("to")
     public String to;
+
     public double rate;
     public String date;
     public String source;
 
-    @JsonManagedReference("currency-users")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonBackReference("user-currencies")
+    @ManyToOne
     @JoinColumn(name = "user_id")
-    private List<User> users = new ArrayList<>();
+    private User user;
 
     public CurrencyResponse() {}
 
@@ -97,12 +98,12 @@ public class CurrencyResponse {
         this.source = source;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -127,7 +128,7 @@ public class CurrencyResponse {
                 ", rate=" + rate +
                 ", date='" + date + '\'' +
                 ", source='" + source + '\'' +
-                ", users=" + users +
+                ", user=" + user +
                 '}';
     }
 }

@@ -8,6 +8,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import me.fit.exception.UserNotFoundException;
 import me.fit.model.CurrencyResponse;
 import me.fit.rest.client.CurrencyApi;
 import me.fit.service.UserService;
@@ -34,7 +35,7 @@ public class CurrencyResource {
             currencyResponse.setValue(value);
             userService.addCurrencyConversionToUser(userId, currencyResponse);
             return Response.ok().entity(currencyResponse).build();
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             return Response.ok().status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
 

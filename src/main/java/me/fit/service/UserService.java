@@ -62,8 +62,8 @@ public class UserService {
         if (user == null) {
             throw new UserNotFoundException(userId);
         }
-        currencyResponse.getUsers().add(user);
-        user.setCurrencyResponse(currencyResponse);
+        currencyResponse.setUser(user);
+        user.getCurrencies().add(currencyResponse);
         return em.merge(user);
     }
 }
