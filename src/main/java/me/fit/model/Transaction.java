@@ -36,6 +36,9 @@ public class Transaction {
     @Transient // za sad je ovako jer jos nismo radili @ManyToMany
     private List<Tag> tags;
 
+    @ManyToMany
+    private List<UploadedFile> uploadedFiles;
+
     @JsonBackReference("account-transactions")
     @ManyToOne
     @JoinColumn(name = "account_id")
@@ -87,6 +90,14 @@ public class Transaction {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public List<UploadedFile> getUploadedFiles() {
+        return uploadedFiles;
+    }
+
+    public void setUploadedFiles(List<UploadedFile> uploadedFiles) {
+        this.uploadedFiles = uploadedFiles;
     }
 
     public Account getAccount() {

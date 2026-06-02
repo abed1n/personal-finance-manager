@@ -6,7 +6,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import me.fit.model.Account;
 import me.fit.model.Transaction;
+import me.fit.model.UploadedFile;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Dependent
@@ -49,6 +52,33 @@ public class TransactionService {
         return em.createNamedQuery(Transaction.GET_TRANSACTIONS_BY_CATEGORY_ID, Transaction.class)
                 .setParameter("id", id)
                 .getResultList();
+    }
+
+    public Transaction getTransactionById(Long id) {
+        return em.find(Transaction.class, id);
+    }
+
+    @Transactional
+    public Transaction addUploadedFileToTransaction(Long transactionId, UploadedFile uploadedFile) {
+        Transaction transaction = em.find(Transaction.class, transactionId);
+        em.persist(uploadedFile);
+        if (transaction.getUploadedFiles() == null) {
+            transaction.setUploadedFiles(new ArrayList<>());
+        }
+        transaction.getUploadedFiles().add(uploadedFile);
+        return transaction;
+    }
+
+    @Transactional
+    public Transaction getTransactionWithFiles(Long id) {
+        Transaction transaction = em.find(Transaction.class, id);
+        if (transaction == null) {
+            return null;
+        }
+        for (UploadedFile uploadedFile : transaction.getUploadedFiles()) {
+            uploadedFile.setFile(new File(uploadedFile.getFilename()));
+        }
+        return transaction;
     }
 
 }
